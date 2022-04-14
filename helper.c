@@ -2,21 +2,21 @@
  *  helper.c - setuid helper program for authbind
  *
  *  authbind is Copyright (C) 1998 Ian Jackson
- * 
+ *
  *  This program is free software; you can redistribute it and/or modify
  *  it under the terms of the GNU General Public License as published by
  *  the Free Software Foundation; either version 2, or (at your option)
  *  any later version.
- * 
+ *
  *  This program is distributed in the hope that it will be useful,
  *  but WITHOUT ANY WARRANTY; without even the implied warranty of
  *  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
  *  GNU General Public License for more details.
- * 
+ *
  *  You should have received a copy of the GNU General Public License
  *  along with this program; if not, write to the Free Software Foundation,
- *  Inc., 59 Temple Place - Suite 330, Boston, MA 02111-1307, USA. 
- * 
+ *  Inc., 59 Temple Place - Suite 330, Boston, MA 02111-1307, USA.
+ *
  */
 
 #include <errno.h>
@@ -55,7 +55,7 @@ static struct sockaddr_in saddr;
 
 static void authorised(void) {
   if (bind(0, (struct sockaddr *) &saddr, sizeof(saddr))) {
-    perrorfail("libauthbind's helper: bind() failed");
+    perrorfail("bind() failed");
 
   } else {
     _exit(0);
@@ -63,7 +63,7 @@ static void authorised(void) {
 }
 
 int main(int argc, const char *const *argv) {
-  uid_t uid;
+  uid_t uid, euid;
   char fnbuf[100];
   char *ep;
   const char *np;
@@ -72,7 +72,7 @@ int main(int argc, const char *const *argv) {
   int nchar;
   FILE *file;
 
-  if (argc != 3) badusage(); 
+  if (argc != 3) badusage();
   addr= strtoul(argv[1],&ep,16); if (*ep || addr&~0x0ffffffffUL) badusage();
   port= strtoul(argv[2],&ep,16); if (*ep || port&~0x0ffffUL) badusage();
   hport= htons(port);
@@ -83,6 +83,18 @@ int main(int argc, const char *const *argv) {
 
   if (chdir(CONFIGDIR)) {
     perrorfail("chdir " CONFIGDIR);
+  }
+
+  euid = geteuid();
+  if (euid == (uid_t)-1) {
+    perrorfail("geteuid");
+  }
+
+  if (euid != (uid_t)0) {
+    fprintf(stderr, "Error: libauthbind's helper needs root privileges. Please run:\n");
+    fprintf(stderr, "    $ chmod u+s %s\n", argv[0]);
+    fprintf(stderr, "    $ sudo chown root %s\n\n", argv[0]);
+    exiterrno(EPERM);
   }
 
   fnbuf[sizeof(fnbuf)-1] = 0;
@@ -140,7 +152,7 @@ int main(int argc, const char *const *argv) {
 	alen>32 || pmin&~0x0ffff || pmax&~0x0ffff ||
 	a1&~0x0ff || a2&~0xff || a3&~0x0ff || a4&~0x0ff)
       continue;
-    
+
     if (hport<pmin || hport>pmax) continue;
 
     thaddr= (a1<<24)|(a2<<16)|(a3<<8)|(a4);

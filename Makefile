@@ -19,7 +19,6 @@
 # $Id: Makefile,v 1.10 2007-09-23 19:22:24 ian Exp $
 
 prefix=/usr/local
-#prefix=/Users/tj/local/authbind
 
 bin_dir=$(prefix)/bin
 lib_dir=$(prefix)/lib/authbind
@@ -31,28 +30,17 @@ man1_dir=$(man_dir)/man1
 man8_dir=$(man_dir)/man8
 
 etc_dir=/etc/authbind
-#etc_dir=/Users/tj/local/authbind/etc/authbind
 
 INSTALL_USER=root
-INSTALL_GROUP=wheel
-#INSTALL_USER=tj
-#INSTALL_GROUP=staff
+INSTALL_GROUP=admin
 
 INSTALL_FILE	?= install -o $(INSTALL_USER) -g $(INSTALL_GROUP) -m 644
-INSTALL_PROGRAM ?= install -o $(INSTALL_USER) -g $(INSTALL_GROUP) -m 755 -s
+INSTALL_PROGRAM ?= sudo install -o $(INSTALL_USER) -g $(INSTALL_GROUP) -m 755 -s
 INSTALL_DIR	?= install -o $(INSTALL_USER) -g $(INSTALL_GROUP) -m 755 -d
 STRIP		?= strip
 
-# Note that the i386 architecture is deprecated for macOS.
-# If you have installed or updated Xcode recently, make of MacOSX-authbind will fail.
-# That's why, in the main Makefile the support for i386 has been removed.
-# However, if you still need to to build for both architectures, in order to
-# interoperate with executables of either arch.  For example, the Mac OSX
-# Android SDK provides i386 executables, which will fail from dyld failures
-# from loading the libauthbind.dylib library if that library is only built
-# for e.g. the x86_64 arch. In that case, please use Makefile.i386.
 ARCH=-arch arm64 -arch x86_64
-OSX_CFLAGS=-flat_namespace
+OSX_CFLAGS=
 OSX_LDFLAGS=$(ARCH) -dynamiclib -dynamic -flat_namespace
 
 OPTIMISE=-O2
@@ -93,7 +81,8 @@ install: $(TARGETS) install-man
 	$(INSTALL_FILE) $(LIBRARY)$(LIBEXT) $(lib_dir)/.
 #	$(STRIP) --strip-unneeded $(lib_dir)/$(LIBTARGET)
 #	ln -sf $(LIBTARGET) $(lib_dir)/$(LIBCANON)
-	$(INSTALL_DIR) $(etc_dir) $(etc_dir)/byport $(etc_dir)/byaddr $(etc_dir)/byuid
+# $(INSTALL_DIR) $(etc_dir) $(etc_dir)/byport $(etc_dir)/byaddr $(etc_dir)/byuid
+	$(INSTALL_DIR) -o $(INSTALL_USER) -g $(INSTALL_GROUP) $(etc_dir) $(etc_dir)/byport $(etc_dir)/byaddr $(etc_dir)/byuid
 
 install-man: $(MANPAGES_1) $(MANPAGES_8)
 	$(INSTALL_DIR) $(man1_dir) $(man8_dir)

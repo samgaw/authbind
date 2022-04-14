@@ -1,9 +1,6 @@
-# IntelliJ IDEA
-.idea
-*.iml
-out
-.classpath
-.settings/
-.project
-bin/
-logs/
+authbind
+authbind.o
+helper
+helper.o
+libauthbind.dylib
+libauthbind.dylib.dSYM/

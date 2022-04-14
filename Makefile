@@ -1,5 +1,5 @@
 # Makefile for authbind
-# 
+#
 # authbind is Copyright (C) 1998 Ian Jackson
 #
 # This program is free software; you can redistribute it and/or modify
@@ -14,7 +14,7 @@
 #
 # You should have received a copy of the GNU General Public License
 # along with this program; if not, write to the Free Software Foundation,
-# Inc., 59 Temple Place - Suite 330, Boston, MA 02111-1307, USA. 
+# Inc., 59 Temple Place - Suite 330, Boston, MA 02111-1307, USA.
 #
 # $Id: Makefile,v 1.10 2007-09-23 19:22:24 ian Exp $
 
@@ -38,7 +38,7 @@ INSTALL_GROUP=wheel
 #INSTALL_USER=tj
 #INSTALL_GROUP=staff
 
-INSTALL_FILE	?= install -o $(INSTALL_USER) -g $(INSTALL_GROUP) -m 644 
+INSTALL_FILE	?= install -o $(INSTALL_USER) -g $(INSTALL_GROUP) -m 644
 INSTALL_PROGRAM ?= install -o $(INSTALL_USER) -g $(INSTALL_GROUP) -m 755 -s
 INSTALL_DIR	?= install -o $(INSTALL_USER) -g $(INSTALL_GROUP) -m 755 -d
 STRIP		?= strip
@@ -51,7 +51,7 @@ STRIP		?= strip
 # Android SDK provides i386 executables, which will fail from dyld failures
 # from loading the libauthbind.dylib library if that library is only built
 # for e.g. the x86_64 arch. In that case, please use Makefile.i386.
-ARCH=-arch x86_64
+ARCH=-arch arm64 -arch x86_64
 OSX_CFLAGS=-flat_namespace
 OSX_LDFLAGS=$(ARCH) -dynamiclib -dynamic -flat_namespace
 
